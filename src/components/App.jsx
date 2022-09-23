@@ -38,7 +38,7 @@ function Post(props) {
 
   return (
     // Use semantic markup
-    <article align="center">
+    <article>
       <h2>{post.title}</h2>
       <p>Date Published: {post.publishDate}</p>
       <h3>Author: {post.author.name}</h3>
