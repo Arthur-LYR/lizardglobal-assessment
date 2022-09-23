@@ -65,7 +65,7 @@ function App() {
       let posts = data.posts;
       ReactDOM.render(
         // Semantic Markup
-        <section>
+        <section align="center">
           <ul class="no-bullets">
             {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
           </ul>
