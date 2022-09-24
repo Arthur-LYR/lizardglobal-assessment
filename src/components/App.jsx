@@ -68,18 +68,76 @@ function Post(props) {
  * @returns Component for PostList
  */
 function PostList(props) {
+  // Page Details
+  const [currentPage, setCurrentPage] = useState(1); 
+  const recordsPerPage = 5;
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+
   // We are only interested in posts of a specific category
-  let posts = filterPostList(props.posts, props.category);
+  const posts = filterPostList(props.posts, props.category)
+
+  // Records to be displayed on the current page
+  const pagePosts = posts.slice(indexOfFirstRecord, indexOfLastRecord);
+  const nPages = Math.ceil(posts.length / recordsPerPage);
 
   return (
     // Semantic Markup
     <section>
       <p>{posts.length} Results</p>
+      <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       <hr/>
       <ul className="no-bullets">
-        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
+        {pagePosts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
       </ul>
+      <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+      <br/>
     </section>
+  );
+}
+
+/**
+ * Page Navigation Component
+ * @param {object} props Properties
+ * @returns Navigation Component
+ */
+function Navigation(props) {
+  // Important Variables
+  let nPages = props.nPages;
+  let currentPage = props.currentPage;
+  let setCurrentPage = props.setCurrentPage;
+
+  // Go to previous page
+  const prevPage = () => {
+    if(currentPage !== 1) 
+      setCurrentPage(currentPage - 1)
+  }
+
+  // Go to next page
+  const nextPage = () => {
+    if(currentPage !== nPages) 
+      setCurrentPage(currentPage + 1)
+  }
+
+  // Done
+  return (
+    <nav>
+      <ul className="no-bullets pagination page-nav">
+        <li>
+          <button onClick={prevPage}>
+            ←
+          </button>
+        </li>
+        <li>
+          <button disabled>{currentPage}</button>
+        </li>
+        <li>
+          <button onClick={nextPage}>
+            →
+          </button>
+        </li>
+      </ul>
+    </nav>
   );
 }
 
