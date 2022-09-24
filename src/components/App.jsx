@@ -1,22 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-/**
- * Get the data from the API.
- * @param {string} api Link to API
- * @returns Appropriate Promise if success, else empty array
- */
-async function getData(api) {
-  // Try to get data
-  try{
-    const response = await fetch(api);
-    return await response.json();
-  } 
-  // Cannot get data
-  catch(error) {
-    return [];
-  }
-}
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
 /**
  * Component for Category in Post
@@ -71,7 +53,7 @@ function filterPostList(posts, filterCat) {
       for (let i = 0; i < post.categories.length; i++) {
         let category = post.categories[i];
         // Case insensitive pattern matching
-        if (filterCat.toUpperCase() === category.name.toUpperCase()) {
+        if (category.name.toUpperCase().includes(filterCat.toUpperCase())) {
           return true;
         }
       }
@@ -91,7 +73,7 @@ function PostList(props) {
 
   return (
     // Semantic Markup
-    <section align="center">
+    <section>
       <ul className="no-bullets">
         {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
       </ul>
@@ -99,29 +81,72 @@ function PostList(props) {
   );
 }
 
+function Filter({category, setCategory}) {
+  // Post list should update in real time
+  return (
+    <form>
+      <label>Category:&nbsp;
+        <input 
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
+      </label>
+    </form>
+  )
+}
+
 /**
- * Main Component. Renders to DOM directly.
- * @returns null
+ * Main Component.
+ * @returns App Component
  */
 function App() {
-  // Retrieve data from API
-  getData("/api/posts").then(
-    // Success
-    function(data) { 
-      // Get only the posts
-      let posts = data.posts;
-      let category = "";
-      ReactDOM.render(<PostList posts={posts} category={category}/>, document.getElementById('root'));
-    },
+  // Important Values
+  const [posts, setPosts] = useState([]);
+  const [category, setCategory] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-    // Failure
-    function(error) {
-      console.error(error);
-    }
-  );
+  // Fetch from API
+  useEffect(() => {
+    fetch("/api/posts")
+      .then(res => res.json())
+      .then(
+        (data) => {
+          // Data has loaded successfully
+          setIsLoaded(true);
+          setPosts(data.posts);
+        },
+        (error) => {
+          // Data did not load successfully
+          setIsLoaded(true);
+          setError(error);
+          console.error(error);
+        }
+      )
+  }, [])
 
-  // We've already rendered everything
-  return null;
+  // Done
+  if (error) {
+    // Display Error
+    return <p align="center">Error: {error.message}</p>;
+  } else if (!isLoaded) {
+    // Not loaded yet, display message
+    return <p align="center">Loading...</p>;
+  } else {
+    // Display Content
+    return (
+      <main align="center">
+        <CategoryContext.Provider value={category}>
+          <Filter category={category} setCategory={setCategory}/>
+          <hr/>
+          <PostList posts={posts} category={category}/>
+        </CategoryContext.Provider>
+      </main>
+    );
+  }
 }
+
+const CategoryContext = createContext(); 
 
 export default App;
