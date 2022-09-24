@@ -45,10 +45,29 @@ function Post(props) {
       <img src={post.author.avatar} alt="avatar"/>
       <p>{post.summary}</p>
       <h4>Categories</h4>
-      <ul class="no-bullets">
+      <ul className="no-bullets">
         {post.categories.map(category => <li key={category.id}><Category category={category}/></li>)}
       </ul>
     </article>
+  );
+}
+
+/**
+ * Component for the list of Posts section
+ * @param {object} props Properties
+ * @returns Component for of PostList
+ */
+function PostList(props) {
+  // We are only interested in posts
+  let posts = props.posts;
+
+  return (
+    // Semantic Markup
+    <section align="center">
+      <ul className="no-bullets">
+        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
+      </ul>
+    </section>
   );
 }
 
@@ -63,14 +82,7 @@ function App() {
     function(data) { 
       // Get only the posts
       let posts = data.posts;
-      ReactDOM.render(
-        // Semantic Markup
-        <section align="center">
-          <ul class="no-bullets">
-            {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
-          </ul>
-        </section>
-      , document.getElementById('root'));
+      ReactDOM.render(<PostList posts={posts}/>, document.getElementById('root'));
     },
 
     // Failure
