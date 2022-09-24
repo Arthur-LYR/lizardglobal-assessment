@@ -35,25 +35,6 @@ function Post(props) {
 }
 
 /**
- * Component for the list of Posts section
- * @param {object} props Properties
- * @returns Component for PostList
- */
-function PostList(props) {
-  // We are only interested in posts of a specific category
-  let posts = props.posts;
-
-  return (
-    // Semantic Markup
-    <section>
-      <ul className="no-bullets">
-        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
-      </ul>
-    </section>
-  );
-}
-
-/**
  * Given an array of posts, filter by category
  * @param {Array[object]} posts Array of Posts
  * @param {string} filterCat Category to filter by
@@ -82,32 +63,55 @@ function PostList(props) {
 }
 
 /**
+ * Component for the list of Posts section
+ * @param {object} props Properties
+ * @returns Component for PostList
+ */
+function PostList(props) {
+  // We are only interested in posts of a specific category
+  let posts = filterPostList(props.posts, props.category);
+
+  return (
+    // Semantic Markup
+    <section>
+      <p>{posts.length} Results</p>
+      <hr/>
+      <ul className="no-bullets">
+        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
+      </ul>
+    </section>
+  );
+}
+
+/**
  * Component for the filter form. Filters posts by a single category.
  * @param {object} props Properties
  * @returns Component form of Filter
  */
 function Filter(props) {
-  let posts = props.posts;
+  // Important Variables
   let category = props.category;
-  let setPosts = props.setPosts;
   let setCategory = props.setCategory;
+
+  // Ensure filter does not reset when press Enter
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  }
 
   // Post list should update in real time
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <label>Category:&nbsp;
         <input 
           type="text"
           value={category}
           onChange={
-            e => {
-              setCategory(e.target.value);
-              setPosts(filterPostList(posts, category));
+            (event) => {
+              setCategory(event.target.value);
             }
           }
         />
       </label>
-      <p>{posts.length} Results</p>
     </form>
   )
 }
@@ -153,7 +157,7 @@ function App() {
     // Display Content
     return (
       <main align="center">
-        <Filter posts={posts} setPosts={setPosts} category={category} setCategory={setCategory}/>
+        <Filter category={category} setCategory={setCategory}/>
         <hr/>
         <PostList posts={posts} category={category}/>
       </main>
