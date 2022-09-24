@@ -53,13 +53,41 @@ function Post(props) {
 }
 
 /**
+ * Given an array of posts, filter by category
+ * @param {Array[object]} posts Array of Posts
+ * @param {string} filterCat Category to filter by
+ * @returns Filtered list of posts
+ */
+function filterPostList(posts, filterCat) {
+  // If no filter, return as is
+  if (filterCat === "") {
+    return posts;
+  }
+
+  // Filter and return
+  return posts.filter(
+    post => {
+      // Check if categories list contains required post
+      for (let i = 0; i < post.categories.length; i++) {
+        let category = post.categories[i];
+        // Case insensitive pattern matching
+        if (filterCat.toUpperCase() === category.name.toUpperCase()) {
+          return true;
+        }
+      }
+      return false;
+    }
+  );
+}
+
+/**
  * Component for the list of Posts section
  * @param {object} props Properties
- * @returns Component for of PostList
+ * @returns Component for PostList
  */
 function PostList(props) {
   // We are only interested in posts
-  let posts = props.posts;
+  let posts = filterPostList(props.posts, props.category);
 
   return (
     // Semantic Markup
@@ -82,7 +110,8 @@ function App() {
     function(data) { 
       // Get only the posts
       let posts = data.posts;
-      ReactDOM.render(<PostList posts={posts}/>, document.getElementById('root'));
+      let category = "";
+      ReactDOM.render(<PostList posts={posts} category={category}/>, document.getElementById('root'));
     },
 
     // Failure
