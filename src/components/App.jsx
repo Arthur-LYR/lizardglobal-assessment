@@ -40,7 +40,7 @@ function Post(props) {
     // Use semantic markup
     <article>
       <h2>{post.title}</h2>
-      <p>Date Published: {post.publishDate}</p>
+      <p>Date Published: {new Date(post.publishDate).toUTCString()}</p>
       <h3>Author: {post.author.name}</h3>
       <img src={post.author.avatar} alt="avatar"/>
       <p>{post.summary}</p>
