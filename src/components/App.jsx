@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * Component for Category in Post
@@ -35,12 +35,31 @@ function Post(props) {
 }
 
 /**
+ * Component for the list of Posts section
+ * @param {object} props Properties
+ * @returns Component for PostList
+ */
+function PostList(props) {
+  // We are only interested in posts of a specific category
+  let posts = props.posts;
+
+  return (
+    // Semantic Markup
+    <section>
+      <ul className="no-bullets">
+        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
+      </ul>
+    </section>
+  );
+}
+
+/**
  * Given an array of posts, filter by category
  * @param {Array[object]} posts Array of Posts
  * @param {string} filterCat Category to filter by
  * @returns Filtered list of posts
  */
-function filterPostList(posts, filterCat) {
+ function filterPostList(posts, filterCat) {
   // If no filter, return as is
   if (filterCat === "") {
     return posts;
@@ -63,25 +82,16 @@ function filterPostList(posts, filterCat) {
 }
 
 /**
- * Component for the list of Posts section
+ * Component for the filter form. Filters posts by a single category.
  * @param {object} props Properties
- * @returns Component for PostList
+ * @returns Component form of Filter
  */
-function PostList(props) {
-  // We are only interested in posts
-  let posts = filterPostList(props.posts, props.category);
+function Filter(props) {
+  let posts = props.posts;
+  let category = props.category;
+  let setPosts = props.setPosts;
+  let setCategory = props.setCategory;
 
-  return (
-    // Semantic Markup
-    <section>
-      <ul className="no-bullets">
-        {posts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
-      </ul>
-    </section>
-  );
-}
-
-function Filter({category, setCategory}) {
   // Post list should update in real time
   return (
     <form>
@@ -89,9 +99,15 @@ function Filter({category, setCategory}) {
         <input 
           type="text"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={
+            e => {
+              setCategory(e.target.value);
+              setPosts(filterPostList(posts, category));
+            }
+          }
         />
       </label>
+      <p>{posts.length} Results</p>
     </form>
   )
 }
@@ -137,16 +153,12 @@ function App() {
     // Display Content
     return (
       <main align="center">
-        <CategoryContext.Provider value={category}>
-          <Filter category={category} setCategory={setCategory}/>
-          <hr/>
-          <PostList posts={posts} category={category}/>
-        </CategoryContext.Provider>
+        <Filter posts={posts} setPosts={setPosts} category={category} setCategory={setCategory}/>
+        <hr/>
+        <PostList posts={posts} category={category}/>
       </main>
     );
   }
 }
-
-const CategoryContext = createContext(); 
 
 export default App;
