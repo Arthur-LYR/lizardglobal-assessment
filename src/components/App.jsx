@@ -86,7 +86,7 @@ function PostList(props) {
   if (posts.length === 0) {
     // Return message is no posts
     return (
-      <p>No Posts Found</p>
+      <p className='center'>No Posts Found</p>
     );
   } else {
     // Else display content
@@ -142,7 +142,7 @@ function Navigation(props) {
   // Done
   return (
     <nav>
-      <ul className="no-bullets pagination page-nav">
+      <ul>
         <li>
           <button onClick={firstPage}>
             &lt;&lt;
@@ -240,14 +240,14 @@ function App() {
   // Done
   if (error) {
     // Display Error
-    return <p align="center">Error: {error.message}</p>;
+    return <p className="center">Error: {error.message}</p>;
   } else if (!isLoaded) {
     // Not loaded yet, display message
-    return <p align="center">Loading...</p>;
+    return <p className="center">Loading...</p>;
   } else {
     // Display Content
     return (
-      <main align="center">
+      <main align="center" className='pad'>
         <Filter category={category} setCategory={setCategory} setCurrentPage={setCurrentPage}/>
         <hr/>
         <PostList posts={posts} category={category} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
