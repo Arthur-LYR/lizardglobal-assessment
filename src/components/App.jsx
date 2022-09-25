@@ -82,19 +82,28 @@ function PostList(props) {
   const pagePosts = posts.slice(indexOfFirstRecord, indexOfLastRecord);
   const nPages = Math.ceil(posts.length / recordsPerPage);
 
-  return (
-    // Semantic Markup
-    <section>
-      <p>{posts.length} Results</p>
-      <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-      <hr/>
-      <ul className="no-bullets">
-        {pagePosts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
-      </ul>
-      <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-      <br/>
-    </section>
-  );
+  // Check if posts are present
+  if (posts.length === 0) {
+    // Return message is no posts
+    return (
+      <p>No Posts Found</p>
+    );
+  } else {
+    // Else display content
+    return (
+      // Semantic Markup
+      <section>
+        <p>{posts.length} Results</p>
+        <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+        <hr/>
+        <ul className="no-bullets">
+          {pagePosts.map(post => <li key={post.id}><Post post={post}/><hr/></li>)}
+        </ul>
+        <Navigation nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+        <br/>
+      </section>
+    );
+  }
 }
 
 /**
