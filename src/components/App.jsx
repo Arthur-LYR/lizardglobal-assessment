@@ -69,7 +69,8 @@ function Post(props) {
  */
 function PostList(props) {
   // Page Details
-  const [currentPage, setCurrentPage] = useState(1); 
+  const currentPage = props.currentPage;
+  const setCurrentPage = props.setCurrentPage;
   const recordsPerPage = 5;
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -150,6 +151,7 @@ function Filter(props) {
   // Important Variables
   let category = props.category;
   let setCategory = props.setCategory;
+  let setCurrentPage = props.setCurrentPage;
 
   // Ensure filter does not reset when press Enter
   const handleSubmit = (event) => {
@@ -165,6 +167,7 @@ function Filter(props) {
           value={category}
           onChange={
             (event) => {
+              setCurrentPage(1);
               setCategory(event.target.value);
             }
           }
@@ -184,6 +187,7 @@ function App() {
   const [category, setCategory] = useState("");
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); 
 
   // Fetch from API
   useEffect(() => {
@@ -215,9 +219,9 @@ function App() {
     // Display Content
     return (
       <main align="center">
-        <Filter category={category} setCategory={setCategory}/>
+        <Filter category={category} setCategory={setCategory} setCurrentPage={setCurrentPage}/>
         <hr/>
-        <PostList posts={posts} category={category}/>
+        <PostList posts={posts} category={category} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       </main>
     );
   }
